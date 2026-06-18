@@ -67,6 +67,11 @@ export default function StartPage() {
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [animating, setAnimating] = useState(false);
 
+  // Separate MM / DD / YYYY inputs so format is always explicit
+  const [birthMonth, setBirthMonth] = useState('');
+  const [birthDay,   setBirthDay]   = useState('');
+  const [birthYear,  setBirthYear]  = useState('');
+
   const [step1, setStep1] = useState<Step1Data>({
     birth_date:    '',
     birth_time:    '',
@@ -86,6 +91,16 @@ export default function StartPage() {
   const [errors2, setErrors2] = useState<Errors2>({});
   const [submitting, setSubmitting] = useState(false);
   const [apiError, setApiError] = useState('');
+
+  function updateBirthDate(m: string, d: string, y: string) {
+    if (m && d && y && y.length === 4) {
+      const mm   = m.padStart(2, '0');
+      const dd   = d.padStart(2, '0');
+      setStep1(p => ({ ...p, birth_date: `${y}-${mm}-${dd}` }));
+    } else {
+      setStep1(p => ({ ...p, birth_date: '' }));
+    }
+  }
 
   function validateStep1(): boolean {
     const e: Errors1 = {};
@@ -193,15 +208,47 @@ export default function StartPage() {
 
                 <div className="ob-field">
                   <label className="label">Date of birth <span>*</span></label>
-                  <input
-                    className={`input ${errors1.birth_date ? 'input-error' : ''}`}
-                    type="date"
-                    value={step1.birth_date}
-                    onChange={e => {
-                      setStep1(p => ({ ...p, birth_date: e.target.value }));
-                      setErrors1(p => ({ ...p, birth_date: undefined }));
-                    }}
-                  />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr', gap: 8 }}>
+                    <input
+                      className={`input ${errors1.birth_date ? 'input-error' : ''}`}
+                      type="number"
+                      placeholder="MM"
+                      min={1} max={12}
+                      value={birthMonth}
+                      onChange={e => {
+                        const v = e.target.value.slice(0, 2);
+                        setBirthMonth(v);
+                        updateBirthDate(v, birthDay, birthYear);
+                        setErrors1(p => ({ ...p, birth_date: undefined }));
+                      }}
+                    />
+                    <input
+                      className={`input ${errors1.birth_date ? 'input-error' : ''}`}
+                      type="number"
+                      placeholder="DD"
+                      min={1} max={31}
+                      value={birthDay}
+                      onChange={e => {
+                        const v = e.target.value.slice(0, 2);
+                        setBirthDay(v);
+                        updateBirthDate(birthMonth, v, birthYear);
+                        setErrors1(p => ({ ...p, birth_date: undefined }));
+                      }}
+                    />
+                    <input
+                      className={`input ${errors1.birth_date ? 'input-error' : ''}`}
+                      type="number"
+                      placeholder="YYYY"
+                      min={1900} max={new Date().getFullYear()}
+                      value={birthYear}
+                      onChange={e => {
+                        const v = e.target.value.slice(0, 4);
+                        setBirthYear(v);
+                        updateBirthDate(birthMonth, birthDay, v);
+                        setErrors1(p => ({ ...p, birth_date: undefined }));
+                      }}
+                    />
+                  </div>
                   {errors1.birth_date && <span className="ob-error">{errors1.birth_date}</span>}
                 </div>
 
