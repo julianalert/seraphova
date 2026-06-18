@@ -11,6 +11,7 @@ import {
   sanitizeTime,
   sanitizeFocusAreas,
   sanitizeDeliveryTime,
+  sanitizeTimezone,
 } from '@/lib/sanitize';
 
 // 5 quiz submissions per IP per hour
@@ -44,6 +45,7 @@ export async function POST(req: NextRequest) {
     const focus_areas   = sanitizeFocusAreas(body.focus_areas);
     const delivery_time = sanitizeDeliveryTime(body.delivery_time);
     const free_context  = sanitizeText(body.free_context, 1000) || null;
+    const timezone      = sanitizeTimezone(body.timezone);
 
     // ─── Validate required fields ───────────────────────────────────────────
     if (!birth_date)              return NextResponse.json({ error: 'Invalid or missing date of birth.' },   { status: 400 });
@@ -94,6 +96,7 @@ export async function POST(req: NextRequest) {
         focus_areas,
         delivery_time,
         free_context,
+        timezone,
         status: 'pending',
       })
       .select('id')

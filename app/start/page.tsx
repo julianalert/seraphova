@@ -9,6 +9,7 @@ interface Step1Data {
   birth_city:    string;
   focus_areas:   string[];
   delivery_time: string;
+  timezone:      string;
 }
 
 interface Step2Data {
@@ -31,6 +32,35 @@ const FOCUS_OPTIONS = [
 
 const DELIVERY_TIMES = ['6am', '7am', '8am', '9am'];
 
+const TIMEZONES = [
+  { value: 'UTC-12',  label: 'UTC−12 — Baker Island, Howland Island' },
+  { value: 'UTC-11',  label: 'UTC−11 — American Samoa, Midway Island' },
+  { value: 'UTC-10',  label: 'UTC−10 — Hawaii (Honolulu)' },
+  { value: 'UTC-9',   label: 'UTC−9 — Alaska (Anchorage)' },
+  { value: 'UTC-8',   label: 'UTC−8 — US Pacific (Los Angeles, Vancouver)' },
+  { value: 'UTC-7',   label: 'UTC−7 — US Mountain (Denver, Phoenix)' },
+  { value: 'UTC-6',   label: 'UTC−6 — US Central (Chicago, Mexico City)' },
+  { value: 'UTC-5',   label: 'UTC−5 — US Eastern (New York, Toronto)' },
+  { value: 'UTC-4',   label: 'UTC−4 — Atlantic (Caracas, Santiago)' },
+  { value: 'UTC-3',   label: 'UTC−3 — Brazil (São Paulo), Argentina (Buenos Aires)' },
+  { value: 'UTC-2',   label: 'UTC−2 — South Georgia, Fernando de Noronha' },
+  { value: 'UTC-1',   label: 'UTC−1 — Azores (Portugal)' },
+  { value: 'UTC+0',   label: 'UTC+0 — UK (London), Ireland, West Africa (Ghana)' },
+  { value: 'UTC+1',   label: 'UTC+1 — Central Europe (Paris, Berlin, Rome, Madrid)' },
+  { value: 'UTC+2',   label: 'UTC+2 — Eastern Europe (Athens, Helsinki), Egypt, South Africa' },
+  { value: 'UTC+3',   label: 'UTC+3 — Moscow, Turkey (Istanbul), East Africa (Nairobi)' },
+  { value: 'UTC+4',   label: 'UTC+4 — UAE (Dubai), Azerbaijan (Baku), Mauritius' },
+  { value: 'UTC+5',   label: 'UTC+5 — Pakistan (Karachi), Uzbekistan (Tashkent)' },
+  { value: 'UTC+5:30',label: 'UTC+5:30 — India (Delhi, Mumbai), Sri Lanka' },
+  { value: 'UTC+6',   label: 'UTC+6 — Bangladesh (Dhaka), Kazakhstan (Almaty)' },
+  { value: 'UTC+7',   label: 'UTC+7 — Thailand (Bangkok), Vietnam, Indonesia (Jakarta)' },
+  { value: 'UTC+8',   label: 'UTC+8 — China (Beijing), Singapore, Philippines (Manila)' },
+  { value: 'UTC+9',   label: 'UTC+9 — Japan (Tokyo), Korea (Seoul)' },
+  { value: 'UTC+10',  label: 'UTC+10 — Eastern Australia (Sydney, Melbourne)' },
+  { value: 'UTC+11',  label: 'UTC+11 — Solomon Islands, New Caledonia' },
+  { value: 'UTC+12',  label: 'UTC+12 — New Zealand (Auckland), Fiji' },
+];
+
 export default function StartPage() {
   const router = useRouter();
 
@@ -43,6 +73,7 @@ export default function StartPage() {
     birth_city:    '',
     focus_areas:   [],
     delivery_time: '7am',
+    timezone:      'UTC+0',
   });
 
   const [step2, setStep2] = useState<Step2Data>({
@@ -237,6 +268,20 @@ export default function StartPage() {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                <div className="ob-field">
+                  <label className="label">Your timezone</label>
+                  <select
+                    className="input"
+                    value={step1.timezone}
+                    onChange={e => setStep1(p => ({ ...p, timezone: e.target.value }))}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {TIMEZONES.map(tz => (
+                      <option key={tz.value} value={tz.value}>{tz.label}</option>
+                    ))}
+                  </select>
                 </div>
 
               </div>

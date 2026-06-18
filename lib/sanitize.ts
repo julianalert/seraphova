@@ -49,3 +49,10 @@ export function sanitizeDeliveryTime(value: unknown): string {
   const t = sanitizeText(value, 3);
   return ALLOWED_TIMES.has(t) ? t : '7am';
 }
+
+/** Validate timezone — must match UTC±H or UTC±H:MM format */
+export function sanitizeTimezone(value: unknown): string {
+  const t = sanitizeText(value, 9);
+  if (/^UTC[+-]\d{1,2}(:\d{2})?$/.test(t) || t === 'UTC+0') return t;
+  return 'UTC+0';
+}
