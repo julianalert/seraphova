@@ -198,42 +198,66 @@ function gmst(jd: number): number {
   );
 }
 
+/** Convert ecliptic longitude to Right Ascension (degrees) */
+function eclToRA(lon: number, eps: number): number {
+  return normalize(toDeg(Math.atan2(Math.sin(toRad(lon)) * Math.cos(toRad(eps)), Math.cos(toRad(lon)))));
+}
+
+/** Angular distance between two angles (always ≤ 180°) */
+function angDist(a: number, b: number): number {
+  const d = normalize(a - b);
+  return d > 180 ? 360 - d : d;
+}
+
 function calcAscMC(lst: number, lat: number, eps: number): { asc: number; mc: number } {
   const lstR = toRad(lst);
   const epsR = toRad(eps);
 
+  // MC: the ecliptic point on the upper meridian
   let mc = toDeg(Math.atan2(Math.sin(lstR), Math.cos(lstR) * Math.cos(epsR)));
   mc = normalize(mc);
   if (Math.cos(lstR) < 0) mc = normalize(mc + 180);
 
+  // ASC: standard formula (Meeus Ch 14)
   const latR = toRad(lat);
   let asc = toDeg(Math.atan2(Math.cos(lstR), -(Math.sin(lstR) * Math.cos(epsR) + Math.tan(latR) * Math.sin(epsR))));
   asc = normalize(asc);
-  if (normalize(asc - mc) > 180) asc = normalize(asc + 180);
+
+  // Quadrant correction: pick the candidate whose RA is closest to the
+  // eastern horizon (RA ≈ LST + 90°). The other candidate is 180° off.
+  const eastRA = normalize(lst + 90);
+  if (angDist(eclToRA(normalize(asc + 180), eps), eastRA) < angDist(eclToRA(asc, eps), eastRA)) {
+    asc = normalize(asc + 180);
+  }
 
   return { asc, mc };
 }
 
-// Porphyry houses: divides each quadrant into equal thirds by longitude
+// Porphyry houses: each quadrant divided into equal thirds along the ecliptic.
+// Cusps array is 0-based: index 0 = H1 cusp (ASC), index 9 = H10 cusp (MC).
 function computeHouseCusps(asc: number, mc: number): number[] {
   const ic  = normalize(mc  + 180);
   const dsc = normalize(asc + 180);
-  const quadrant1 = normalize(ic  - dsc); // DSC → IC arc (lower)
-  const quadrant2 = normalize(asc - mc);  // MC  → ASC arc (upper)
+
+  // Arcs going forward (increasing longitude) through each quadrant
+  const arcAscToIc  = normalize(ic  - asc);   // ASC → IC  (houses 1-2-3-4)
+  const arcIcToDsc  = normalize(dsc - ic);    // IC  → DSC (houses 4-5-6-7)
+  const arcDscToMc  = normalize(mc  - dsc);   // DSC → MC  (houses 7-8-9-10)
+  const arcMcToAsc  = normalize(asc - mc);    // MC  → ASC (houses 10-11-12-1)
 
   return [
-    asc,
-    normalize(dsc + quadrant1 / 3),
-    normalize(dsc + (2 * quadrant1) / 3),
-    ic,
-    normalize(ic  + quadrant1 / 3),
-    normalize(ic  + (2 * quadrant1) / 3),
-    dsc,
-    normalize(dsc + quadrant2 / 3),
-    normalize(dsc + (2 * quadrant2) / 3),
-    mc,
-    normalize(mc  + quadrant2 / 3),
-    normalize(mc  + (2 * quadrant2) / 3),
+    asc,                                            // H1
+    normalize(asc + arcAscToIc / 3),               // H2
+    normalize(asc + (2 * arcAscToIc) / 3),         // H3
+    ic,                                             // H4
+    normalize(ic  + arcIcToDsc / 3),               // H5
+    normalize(ic  + (2 * arcIcToDsc) / 3),         // H6
+    dsc,                                            // H7
+    normalize(dsc + arcDscToMc / 3),               // H8
+    normalize(dsc + (2 * arcDscToMc) / 3),         // H9
+    mc,                                             // H10
+    normalize(mc  + arcMcToAsc / 3),               // H11
+    normalize(mc  + (2 * arcMcToAsc) / 3),         // H12
   ];
 }
 
