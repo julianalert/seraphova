@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createPaymentIntent } from '@/lib/stripe';
+import { createCheckoutSession } from '@/lib/stripe';
 import { getOrder } from '@/lib/orders';
 import { rateLimit, getIp } from '@/lib/rateLimit';
 import { logger } from '@/lib/logger';
@@ -35,11 +35,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'This order has already been paid.' }, { status: 409 });
     }
 
-    const intent = await createPaymentIntent(orderId, order.email);
+    const origin  = req.headers.get('origin') ?? process.env.NEXT_PUBLIC_BASE_URL ?? '';
+    const session = await createCheckoutSession(orderId, order.email, origin);
 
-    logger.info({ msg: 'Payment intent created', orderId, intentId: intent.id });
+    logger.info({ msg: 'Checkout session created', orderId, sessionId: session.id });
 
-    return NextResponse.json({ clientSecret: intent.client_secret });
+    return NextResponse.json({ url: session.url });
   } catch (err) {
     logger.error({ msg: 'Error in checkout', error: String(err) });
     return NextResponse.json({ error: 'Failed to create payment intent.' }, { status: 500 });

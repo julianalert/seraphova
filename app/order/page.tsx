@@ -102,7 +102,6 @@ function OrderContent() {
       });
   }, [orderId, router]);
 
-  // ─── Handle checkout (Sprint 4 will replace this) ──────────────────────────
   async function handleCheckout() {
     setPaying(true);
     try {
@@ -112,11 +111,8 @@ function OrderContent() {
         body:    JSON.stringify({ orderId }),
       });
       const json = await res.json();
-      if (json.clientSecret) {
-        // Stripe Payment Element flow (wired in Sprint 4)
-        sessionStorage.setItem('sera_pi_secret',  json.clientSecret);
-        sessionStorage.setItem('sera_order_id',   orderId!);
-        router.push('/checkout');
+      if (json.url) {
+        window.location.href = json.url;   // redirect to Stripe Checkout
       } else if (json.error) {
         alert(json.error);
         setPaying(false);
@@ -167,8 +163,7 @@ function OrderContent() {
             <div className="col-left">
 
               <div className="order-header">
-                <p className="order-eyebrow">Your reading is ready</p>
-                <h1 className="order-title">Here&apos;s a glimpse of<br /><em>today&apos;s horoscope.</em></h1>
+                <h1 className="order-title">Your reading is <em>ready.</em></h1>
               </div>
 
               {/* Horoscope preview */}
@@ -230,19 +225,19 @@ function OrderContent() {
               <div className="comparison-block">
                 <div className="comparison-header">
                   <span>Feature</span>
-                  <span>Generic horoscope</span>
+                  <span>Others</span>
                   <span>Seraphova</span>
                 </div>
                 {[
-                  'Full natal chart used',
-                  'Real daily transits',
-                  'Written just for you',
-                  'Arrives in your inbox',
-                  'No app to open',
+                  { label: 'Full natal chart used',  genericLabel: 'Sun sign only' },
+                  { label: 'Real daily transits',    genericLabel: 'Generic' },
+                  { label: 'Written just for you',   genericLabel: '✕' },
+                  { label: 'Arrives in your inbox',  genericLabel: '✕' },
+                  { label: 'No app to open',         genericLabel: '✕' },
                 ].map(f => (
-                  <div className="comparison-row" key={f}>
-                    <span className="cr-feature">{f}</span>
-                    <span className="cr-no">✕</span>
+                  <div className="comparison-row" key={f.label}>
+                    <span className="cr-feature">{f.label}</span>
+                    <span className={f.genericLabel === '✕' ? 'cr-no' : 'cr-no cr-no-text'}>{f.genericLabel}</span>
                     <span className="cr-yes">✦</span>
                   </div>
                 ))}
@@ -263,6 +258,9 @@ function OrderContent() {
 
                 <div className="panel-header">
                   <p className="panel-eyebrow">Daily Personalized Horoscope</p>
+                  <div className="panel-regular-price">
+                    Regular price <span className="panel-strikethrough">$147</span>
+                  </div>
                   <div className="panel-price-row">
                     <span className="panel-currency">$</span>
                     <span className="panel-amount">47</span>
@@ -270,7 +268,7 @@ function OrderContent() {
                   <p className="panel-period">one-time · 365 daily readings</p>
                   <div className="panel-launch-badge">
                     <span className="panel-badge-dot" />
-                    Early access price
+                    Early access price — save $100
                   </div>
                 </div>
 
@@ -452,6 +450,9 @@ nav { padding:20px 32px; display:flex; align-items:center; justify-content:space
 .comparison-row:last-child{border-bottom:none}
 .comparison-row span:nth-child(2),.comparison-row span:last-child{text-align:center;font-size:16px}
 .cr-feature{color:var(--muted)}.cr-no{color:var(--muted2)}.cr-yes{color:var(--gold)}
+.cr-no-text{font-size:11px!important;color:var(--muted2);font-weight:500;letter-spacing:0.04em}
+.panel-regular-price{font-size:12px;color:var(--muted2);margin-bottom:6px;position:relative;z-index:1}
+.panel-strikethrough{text-decoration:line-through;color:var(--muted)}
 
 .mini-testi { background:var(--card); border:1px solid var(--border); border-radius:var(--r2); padding:24px; margin-bottom:32px; }
 .mini-testi-stars { color:var(--gold); letter-spacing:2px; font-size:13px; margin-bottom:12px; }
