@@ -24,6 +24,12 @@ export function buildWelcomeEmailHTML(
   style="background:#08090f;padding:40px 20px;">
 <tr><td align="center">
 
+  <!-- Logo above card -->
+  <div style="margin-bottom:24px;font-family:Georgia,serif;font-size:22px;
+    font-weight:400;letter-spacing:0.22em;text-transform:uppercase;color:#c9a84c;">
+    ✦ Seraphova
+  </div>
+
   <table width="560" cellpadding="0" cellspacing="0" border="0"
     style="max-width:560px;width:100%;background:#161929;border-radius:16px;
            border:1px solid rgba(255,255,255,0.1);overflow:hidden;">
@@ -32,10 +38,6 @@ export function buildWelcomeEmailHTML(
     <tr>
       <td style="background:linear-gradient(150deg,#0e1120,#12162a);
         padding:32px 32px 28px;border-bottom:1px solid rgba(255,255,255,0.07);">
-        <div style="font-size:10px;font-weight:500;letter-spacing:0.2em;
-          text-transform:uppercase;color:#c9a84c;margin-bottom:12px;">
-          ✦ Seraphova · Welcome
-        </div>
         <div style="font-family:Georgia,serif;font-size:24px;font-weight:300;
           color:#e8e4da;line-height:1.3;">
           Your chart is ready, ${order.first_name}.<br>

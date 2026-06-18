@@ -34,6 +34,12 @@ export function buildReadingEmailHTML(
   style="background:#08090f;padding:40px 20px;">
 <tr><td align="center">
 
+  <!-- Logo above card -->
+  <div style="margin-bottom:24px;font-family:Georgia,serif;font-size:22px;
+    font-weight:400;letter-spacing:0.22em;text-transform:uppercase;color:#c9a84c;">
+    ✦ Seraphova
+  </div>
+
   <!-- Card container -->
   <table width="560" cellpadding="0" cellspacing="0" border="0"
     style="max-width:560px;width:100%;background:#161929;border-radius:16px;
@@ -43,10 +49,6 @@ export function buildReadingEmailHTML(
     <tr>
       <td style="background:linear-gradient(150deg,#0e1120,#12162a);
         padding:28px 32px 24px;border-bottom:1px solid rgba(255,255,255,0.07);">
-        <div style="font-size:10px;font-weight:500;letter-spacing:0.2em;
-          text-transform:uppercase;color:#c9a84c;margin-bottom:6px;">
-          ✦ Seraphova
-        </div>
         <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
           color:rgba(232,228,218,0.3);">${date}</div>
       </td>
