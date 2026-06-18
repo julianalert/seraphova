@@ -213,10 +213,9 @@ function calcAscMC(lst: number, lat: number, eps: number): { asc: number; mc: nu
   const lstR = toRad(lst);
   const epsR = toRad(eps);
 
-  // MC: the ecliptic point on the upper meridian
+  // MC: atan2 handles quadrant automatically — no correction needed
   let mc = toDeg(Math.atan2(Math.sin(lstR), Math.cos(lstR) * Math.cos(epsR)));
   mc = normalize(mc);
-  if (Math.cos(lstR) < 0) mc = normalize(mc + 180);
 
   // ASC: standard formula (Meeus Ch 14)
   const latR = toRad(lat);
