@@ -198,16 +198,6 @@ function gmst(jd: number): number {
   );
 }
 
-/** Convert ecliptic longitude to Right Ascension (degrees) */
-function eclToRA(lon: number, eps: number): number {
-  return normalize(toDeg(Math.atan2(Math.sin(toRad(lon)) * Math.cos(toRad(eps)), Math.cos(toRad(lon)))));
-}
-
-/** Angular distance between two angles (always ≤ 180°) */
-function angDist(a: number, b: number): number {
-  const d = normalize(a - b);
-  return d > 180 ? 360 - d : d;
-}
 
 function calcAscMC(lst: number, lat: number, eps: number): { asc: number; mc: number } {
   const lstR = toRad(lst);
@@ -222,10 +212,10 @@ function calcAscMC(lst: number, lat: number, eps: number): { asc: number; mc: nu
   let asc = toDeg(Math.atan2(Math.cos(lstR), -(Math.sin(lstR) * Math.cos(epsR) + Math.tan(latR) * Math.sin(epsR))));
   asc = normalize(asc);
 
-  // Quadrant correction: pick the candidate whose RA is closest to the
-  // eastern horizon (RA ≈ LST + 90°). The other candidate is 180° off.
-  const eastRA = normalize(lst + 90);
-  if (angDist(eclToRA(normalize(asc + 180), eps), eastRA) < angDist(eclToRA(asc, eps), eastRA)) {
+  // ASC and MC are always in opposite hemispheres — if they're in the same
+  // one (diff < 180°), the formula returned the DSC instead, so flip it.
+  const diff = normalize(asc - mc);
+  if (diff < 180) {
     asc = normalize(asc + 180);
   }
 
