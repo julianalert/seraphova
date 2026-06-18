@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
     // ─── Compute natal chart ────────────────────────────────────────────────
     let natal_chart = null;
     try {
-      natal_chart = await computeNatalChart(birth_date, birth_time, birth_lat, birth_lng);
+      natal_chart = await computeNatalChart(birth_date, birth_time, birth_lat, birth_lng, timezone);
       logger.info({ msg: 'Natal chart computed', email, sun: natal_chart.sun.label });
     } catch (err) {
       logger.warn({ msg: 'Natal chart computation failed — saving without chart', email, error: String(err) });
