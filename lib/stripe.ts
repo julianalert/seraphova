@@ -17,7 +17,7 @@ export async function createCheckoutSession(
       {
         price_data: {
           currency:     'usd',
-          unit_amount:  4700,          // $47.00
+          unit_amount:  100,            // $1.00 (debug)
           product_data: {
             name:        'Seraphova — Daily Personalized Horoscope',
             description: '365 daily readings based on your full natal chart',
