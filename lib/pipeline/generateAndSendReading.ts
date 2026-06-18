@@ -25,23 +25,43 @@ export async function generateAndSendReading(
 
   const t = transits ?? await getOrComputeTransits(date);
 
-  // Generate reading — throws after MAX_RETRIES; let the caller handle propagation
-  const reading = await generateDailyReading(order, t, date);
-
-  const { data: row, error: insertError } = await supabaseAdmin
+  // Use the cached preview reading if already generated (e.g. user visited order page)
+  const { data: existing } = await supabaseAdmin
     .from('daily_readings')
-    .insert({
-      order_id:       orderId,
-      reading_date:   date,
-      raw_response:   JSON.stringify(reading),
-      parsed_reading: reading,
-    })
-    .select('id')
-    .single();
+    .select('id, parsed_reading')
+    .eq('order_id', orderId)
+    .eq('reading_date', date)
+    .maybeSingle();
 
-  if (insertError) {
-    logger.error({ msg: 'Failed to insert reading', orderId, error: insertError.message });
-    return;
+  let reading;
+  let rowId: string;
+
+  if (existing?.parsed_reading) {
+    // Reuse the cached reading so we don't call Claude again
+    reading = existing.parsed_reading;
+    rowId   = existing.id;
+    logger.info({ msg: 'Reusing cached preview reading for pipeline', orderId });
+  } else {
+    // Generate a fresh reading — throws after MAX_RETRIES
+    reading = await generateDailyReading(order, t, date);
+
+    const { data: row, error: insertError } = await supabaseAdmin
+      .from('daily_readings')
+      .insert({
+        order_id:       orderId,
+        reading_date:   date,
+        raw_response:   JSON.stringify(reading),
+        parsed_reading: reading,
+      })
+      .select('id')
+      .single();
+
+    if (insertError) {
+      logger.error({ msg: 'Failed to insert reading', orderId, error: insertError.message });
+      return;
+    }
+
+    rowId = row.id;
   }
 
   const isWelcome = order.total_sent === 0;
@@ -60,7 +80,7 @@ export async function generateAndSendReading(
       sent_at:           messageId ? new Date().toISOString() : null,
       resend_message_id: messageId,
     })
-    .eq('id', row.id);
+    .eq('id', rowId);
 
   await supabaseAdmin
     .from('orders')
