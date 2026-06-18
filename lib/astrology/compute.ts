@@ -202,22 +202,16 @@ function gmst(jd: number): number {
 function calcAscMC(lst: number, lat: number, eps: number): { asc: number; mc: number } {
   const lstR = toRad(lst);
   const epsR = toRad(eps);
+  const latR = toRad(lat);
 
   // MC: atan2 handles quadrant automatically — no correction needed
-  let mc = toDeg(Math.atan2(Math.sin(lstR), Math.cos(lstR) * Math.cos(epsR)));
-  mc = normalize(mc);
+  const mc = normalize(toDeg(Math.atan2(Math.sin(lstR), Math.cos(lstR) * Math.cos(epsR))));
 
-  // ASC: standard formula (Meeus Ch 14)
-  const latR = toRad(lat);
-  let asc = toDeg(Math.atan2(Math.cos(lstR), -(Math.sin(lstR) * Math.cos(epsR) + Math.tan(latR) * Math.sin(epsR))));
-  asc = normalize(asc);
-
-  // ASC and MC are always in opposite hemispheres — if they're in the same
-  // one (diff < 180°), the formula returned the DSC instead, so flip it.
-  const diff = normalize(asc - mc);
-  if (diff < 180) {
-    asc = normalize(asc + 180);
-  }
+  // ASC: correct Meeus formula — atan2 returns the right quadrant directly
+  const asc = normalize(toDeg(Math.atan2(
+    Math.cos(lstR),
+    -(Math.sin(epsR) * Math.tan(latR) + Math.cos(epsR) * Math.sin(lstR)),
+  )));
 
   return { asc, mc };
 }
