@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe';
 import { supabaseAdmin } from '@/lib/supabase';
@@ -60,8 +60,12 @@ export async function POST(req: NextRequest) {
     }
 
     const readingDate = today.toISOString().split('T')[0];
-    generateAndSendReading(orderId, readingDate).catch(err => {
-      console.error(`[webhook] generateAndSendReading failed for order ${orderId}:`, err);
+    after(async () => {
+      try {
+        await generateAndSendReading(orderId, readingDate);
+      } catch (err) {
+        console.error(`[webhook] generateAndSendReading failed for order ${orderId}:`, err);
+      }
     });
   }
 
@@ -103,8 +107,12 @@ export async function POST(req: NextRequest) {
     }
 
     const readingDate = today.toISOString().split('T')[0];
-    generateAndSendReading(orderId, readingDate).catch(err => {
-      console.error(`[webhook] generateAndSendReading failed for renewal ${orderId}:`, err);
+    after(async () => {
+      try {
+        await generateAndSendReading(orderId, readingDate);
+      } catch (err) {
+        console.error(`[webhook] generateAndSendReading failed for renewal ${orderId}:`, err);
+      }
     });
   }
 
