@@ -16,9 +16,9 @@ const securityHeaders = [
     // Stripe Elements requires js.stripe.com and hooks.stripe.com
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://scripts.simpleanalyticscdn.com",
       "frame-src 'self' https://js.stripe.com",
-      "connect-src 'self' https://api.stripe.com https://hooks.stripe.com",
+      "connect-src 'self' https://api.stripe.com https://hooks.stripe.com https://queue.simpleanalyticscdn.com",
       "img-src 'self' data: https:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
