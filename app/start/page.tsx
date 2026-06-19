@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 
 interface Step1Data {
   birth_date:    string;
-  birth_time:    string;
   birth_city:    string;
   focus_areas:   string[];
   delivery_time: string;
@@ -74,7 +73,6 @@ export default function StartPage() {
 
   const [step1, setStep1] = useState<Step1Data>({
     birth_date:    '',
-    birth_time:    '',
     birth_city:    '',
     focus_areas:   [],
     delivery_time: '7am',
@@ -252,31 +250,19 @@ export default function StartPage() {
                   {errors1.birth_date && <span className="ob-error">{errors1.birth_date}</span>}
                 </div>
 
-                <div className="ob-row">
-                  <div className="ob-field">
-                    <label className="label">Time of birth</label>
-                    <input
-                      className="input"
-                      type="time"
-                      value={step1.birth_time}
-                      onChange={e => setStep1(p => ({ ...p, birth_time: e.target.value }))}
-                    />
-                    <span className="ob-hint">Optional — improves rising sign accuracy.</span>
-                  </div>
-                  <div className="ob-field">
-                    <label className="label">City of birth <span>*</span></label>
-                    <input
-                      className={`input ${errors1.birth_city ? 'input-error' : ''}`}
-                      type="text"
-                      placeholder="e.g. Paris, France"
-                      value={step1.birth_city}
-                      onChange={e => {
-                        setStep1(p => ({ ...p, birth_city: e.target.value }));
-                        setErrors1(p => ({ ...p, birth_city: undefined }));
-                      }}
-                    />
-                    {errors1.birth_city && <span className="ob-error">{errors1.birth_city}</span>}
-                  </div>
+                <div className="ob-field">
+                  <label className="label">City of birth <span>*</span></label>
+                  <input
+                    className={`input ${errors1.birth_city ? 'input-error' : ''}`}
+                    type="text"
+                    placeholder="e.g. Paris, France"
+                    value={step1.birth_city}
+                    onChange={e => {
+                      setStep1(p => ({ ...p, birth_city: e.target.value }));
+                      setErrors1(p => ({ ...p, birth_city: undefined }));
+                    }}
+                  />
+                  {errors1.birth_city && <span className="ob-error">{errors1.birth_city}</span>}
                 </div>
 
                 <div className="ob-divider" />
