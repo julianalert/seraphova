@@ -183,6 +183,14 @@ export default function StartPage() {
       <div className="stars" />
       <div className="aurora" />
 
+      <div className="start-page">
+        <nav className="start-nav" aria-label="Site">
+          <div className="start-nav-logo">✦ Seraphova</div>
+          <p className="start-nav-tagline">
+            Daily personalized horoscope, based on your natal chart.
+          </p>
+        </nav>
+
       <main className={`onboarding ${animating ? 'ob-animating' : ''}`}>
         <div className="onboarding-inner">
 
@@ -417,10 +425,53 @@ export default function StartPage() {
 
         </div>
       </main>
+      </div>
 
       <style>{`
+        .start-page {
+          position: relative;
+          z-index: 1;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
+        }
+        .start-nav {
+          padding: 20px 32px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 24px;
+          border-bottom: 1px solid var(--border);
+          background: rgba(8, 9, 15, 0.8);
+          backdrop-filter: blur(20px);
+        }
+        .start-nav-logo {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 20px;
+          font-weight: 400;
+          letter-spacing: 0.16em;
+          color: var(--gold2);
+          text-transform: uppercase;
+          flex-shrink: 0;
+        }
+        .start-nav-tagline {
+          font-size: 13px;
+          color: var(--muted);
+          text-align: right;
+          line-height: 1.45;
+          max-width: 320px;
+        }
+        .start-page .onboarding {
+          flex: 1;
+          min-height: 0;
+        }
         .ob-animating { opacity: 0; transition: opacity 0.25s; }
         .input-error { border-color: rgba(220,100,80,0.5) !important; }
+        @media (max-width: 640px) {
+          .start-nav { padding: 16px 20px; gap: 16px; }
+          .start-nav-logo { font-size: 17px; letter-spacing: 0.12em; }
+          .start-nav-tagline { font-size: 12px; max-width: 180px; }
+        }
         @media (max-width: 480px) {
           .ob-row, .choice-grid { grid-template-columns: 1fr; }
           .onboarding { padding: 32px 16px; }

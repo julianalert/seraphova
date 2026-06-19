@@ -199,8 +199,8 @@ export default function LandingPage() {
           Daily personalized horoscope.<br /><em>Delivered every morning.</em>
           </h1>
           <p className="hero-desc">
-            Answer a short quiz. We read your full natal chart (every planet, every house, every
-            transit) and send you a personalized horoscope before you start your day.
+            We read your full natal chart: every planet, every house, every
+            transit; and send you a personalized horoscope before you start your day. Every day.
           </p>
           <div className="hero-ctas">
             <Link href="/start" className="btn btn-gold btn-xl">Start your reading →</Link>
