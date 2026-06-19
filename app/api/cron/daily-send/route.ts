@@ -29,7 +29,7 @@ function deliveryUTCHour(deliveryTime: string, timezone: string): number {
   return Math.round(utcHour) % 24; // round for half-hour zones
 }
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   // ─── Auth check ──────────────────────────────────────────────────────────
   const auth = req.headers.get('Authorization');
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {

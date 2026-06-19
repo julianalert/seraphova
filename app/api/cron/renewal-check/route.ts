@@ -6,7 +6,7 @@ import type { Order } from '@/types';
 
 export const maxDuration = 60;
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   // ─── Auth check ──────────────────────────────────────────────────────────
   const auth = req.headers.get('Authorization');
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
